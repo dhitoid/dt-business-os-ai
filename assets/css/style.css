@@ -1250,3 +1250,57 @@ border-left:
 4px solid #ef4444;
 
 }
+
+.pomodoro-card{
+
+background:white;
+
+padding:20px;
+
+border-radius:16px;
+
+margin-bottom:15px;
+
+text-align:center;
+
+box-shadow:
+0 2px 8px rgba(
+0,0,0,.08
+);
+
+}
+
+.pomodoro-card h1{
+
+font-size:42px;
+
+margin:10px 0;
+
+}
+
+.summary-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(2,1fr);
+
+gap:10px;
+
+margin-bottom:15px;
+
+}
+
+.summary-card{
+
+background:white;
+
+padding:15px;
+
+border-radius:12px;
+
+text-align:center;
+
+font-weight:600;
+
+}
