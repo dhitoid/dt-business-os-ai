@@ -497,6 +497,244 @@ showToast(
 
 }
 
+function showLoading(){
+
+const el =
+document.getElementById(
+"globalLoading"
+);
+
+if(el){
+
+el.style.display =
+"flex";
+
+}
+
+}
+
+function hideLoading(){
+
+const el =
+document.getElementById(
+"globalLoading"
+);
+
+if(el){
+
+el.style.display =
+"none";
+
+}
+
+}
+
+function toast(
+
+message,
+
+type="info"
+
+){
+
+const container =
+document.getElementById(
+"toastContainer"
+);
+
+if(!container)
+return;
+
+const div =
+document.createElement(
+"div"
+);
+
+div.className =
+`toast ${type}`;
+
+div.innerText =
+message;
+
+container.appendChild(
+div
+);
+
+setTimeout(()=>{
+
+div.remove();
+
+},3000);
+
+}
+
+function confirmModal({
+
+title,
+
+message
+
+}){
+
+return new Promise(
+(resolve)=>{
+
+document
+.getElementById(
+"confirmTitle"
+)
+.innerText =
+title;
+
+document
+.getElementById(
+"confirmMessage"
+)
+.innerText =
+message;
+
+document
+.getElementById(
+"confirmModal"
+)
+.style.display =
+"flex";
+
+document
+.getElementById(
+"confirmOk"
+)
+.onclick=()=>{
+
+document
+.getElementById(
+"confirmModal"
+)
+.style.display=
+"none";
+
+resolve(true);
+
+};
+
+document
+.getElementById(
+"confirmCancel"
+)
+.onclick=()=>{
+
+document
+.getElementById(
+"confirmModal"
+)
+.style.display=
+"none";
+
+resolve(false);
+
+};
+
+});
+}
+
+async function openNotifications(){
+
+const panel =
+document.getElementById(
+"notificationPanel"
+);
+
+panel.classList.add(
+"active"
+);
+
+const list =
+document.getElementById(
+"notificationList"
+);
+
+const notifications =
+await Storage
+.getNotifications();
+
+list.innerHTML =
+
+notifications
+.reverse()
+
+.map(item=>`
+
+<div class="list-card">
+
+<h4>
+
+${item.title}
+
+</h4>
+
+<p>
+
+${item.message}
+
+</p>
+
+</div>
+
+`)
+
+.join("");
+
+}
+
+async function openActivities(){
+
+const panel =
+document.getElementById(
+"activityPanel"
+);
+
+panel.classList.add(
+"active"
+);
+
+const list =
+document.getElementById(
+"activityList"
+);
+
+const logs =
+await Storage
+.getActivities();
+
+list.innerHTML =
+
+logs
+.reverse()
+
+.map(item=>`
+
+<div class="list-card">
+
+<h4>
+
+${item.module}
+
+</h4>
+
+<p>
+
+${item.description}
+
+</p>
+
+</div>
+
+`)
+
+.join("");
+
+}
+
 /*
 ========================================
 INSTALL PWA
@@ -711,14 +949,19 @@ PUBLIC
 */
 
 return {
-
 init,
+showLoading,
+hideLoading,
+toast,
+confirm:
+confirmModal,
+openNotifications,
+openActivities,
 showToast,
 openModal,
 closeModal,
 updateStats,
 formatRupiah
-
 };
 
 })();
