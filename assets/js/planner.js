@@ -356,6 +356,22 @@ new Date()
 
 };
 
+const validation =
+Validator.validateTask(
+task
+);
+
+if(
+!validation.valid
+){
+
+App.showToast(
+validation.message
+);
+
+return;
+}
+
 await Storage.saveTask(
 task
 );
@@ -475,6 +491,22 @@ document.getElementById(
 "editTaskPriority"
 ).value;
 
+const validation =
+Validator.validateTask(
+task
+);
+
+if(
+!validation.valid
+){
+
+App.showToast(
+validation.message
+);
+
+return;
+}
+
 await Storage.saveTask(
 task
 );
@@ -545,6 +577,22 @@ return;
 
 task.completed =
 !task.completed;
+
+const validation =
+Validator.validateTask(
+task
+);
+
+if(
+!validation.valid
+){
+
+App.showToast(
+validation.message
+);
+
+return;
+}
 
 await Storage.saveTask(
 task
