@@ -129,9 +129,116 @@ ${lead.name || "-"}
 
 </p>
 
+${
+lead.surveyDate
+?
+
+`
+
+<p>
+
+🏠 Survey:
+
+${lead.surveyDate}
+
+</p>
+
+`
+
+:
+
+""
+
+}
+
 <p>
 
 🏷️ ${lead.status || "New"}
+
+</p>
+
+${
+lead.tags?.length
+
+?
+
+`
+
+<p>
+
+🏷️
+
+${lead.tags.join(", ")}
+
+</p>
+
+`
+
+:
+
+""
+
+}
+
+<p>
+
+📈 Score :
+${lead.score || 0}
+
+</p>
+
+<p>
+
+📞 Follow Up :
+${lead.followUpCount || 0}x
+
+</p>
+
+${
+lead.lastFollowUp
+?
+
+`
+
+<p>
+
+🕒 Terakhir FU:
+
+${new Date(
+lead.lastFollowUp
+).toLocaleDateString("id-ID")}
+
+</p>
+
+`
+
+:
+
+""
+
+}
+
+<p>
+
+${
+lead.temperature === "Hot"
+?
+
+"🔥 Hot Lead"
+
+:
+
+lead.temperature === "Warm"
+
+?
+
+"🟡 Warm Lead"
+
+:
+
+"❄️ Cold Lead"
+
+}
 
 </p>
 
@@ -147,6 +254,17 @@ flex-wrap:wrap;
 onclick="CRM.openWhatsapp('${lead.phone}')">
 
 WA
+
+</button>
+
+<button
+onclick="
+CRM.followUpLead(
+'${lead.id}'
+)
+">
+
+Follow Up
 
 </button>
 
@@ -237,6 +355,15 @@ Lost
 
 </select>
 
+<input
+type="date"
+id="surveyDate">
+
+<input
+type="text"
+id="leadTags"
+placeholder="Tag: Investor,KPR,Cash">
+
 <textarea
 id="leadNote"
 placeholder="Catatan">
@@ -280,33 +407,12 @@ SAVE LEAD
 */
 
 async function saveLead(e){
-    
-lead.phone =
-Validator.normalizePhone(
-lead.phone
-);
-
-lead.name =
-Validator.sanitize(
-lead.name
-);
-
-lead.source =
-Validator.sanitize(
-lead.source
-);
-
-lead.note =
-Validator.sanitize(
-lead.note
-);
 
 e.preventDefault();
 
 const lead = {
 
-id:
-crypto.randomUUID(),
+id: crypto.randomUUID(),
 
 name:
 document.getElementById(
@@ -328,32 +434,88 @@ document.getElementById(
 "leadStatus"
 ).value,
 
+surveyDate:
+document.getElementById(
+"surveyDate"
+).value,
+
+tags:
+document.getElementById(
+"leadTags"
+)
+.value
+.split(",")
+.map(tag=>tag.trim())
+.filter(Boolean),
+
 note:
 document.getElementById(
 "leadNote"
 ).value,
 
-createdAt:
-new Date()
-.toISOString()
+followUpCount:0,
+
+lastFollowUp:""
 
 };
+
+/*
+SANITIZE
+*/
+
+lead.name =
+Validator.sanitize(
+lead.name
+);
+
+lead.phone =
+Validator.normalizePhone(
+lead.phone
+);
+
+lead.source =
+Validator.sanitize(
+lead.source
+);
+
+lead.note =
+Validator.sanitize(
+lead.note
+);
+
+/*
+VALIDATE
+*/
 
 const validation =
 Validator.validateLead(
 lead
 );
 
-if(
-!validation.valid
-){
+if(!validation.valid){
 
-App.showToast(
-validation.message
+App.toast(
+validation.message,
+"error"
 );
 
 return;
+
 }
+
+/*
+LEAD SCORE
+*/
+
+lead.score =
+calculateLeadScore(
+lead
+);
+
+lead.temperature =
+getLeadTemperature(
+lead.score
+);
 
 await Storage.saveLead(
 lead
@@ -361,13 +523,134 @@ lead
 
 App.closeModal();
 
-App.showToast(
-"Lead berhasil ditambahkan"
+App.toast(
+"Lead berhasil ditambahkan",
+"success"
 );
 
 await loadLeads();
 
 await App.updateStats();
+
+}
+
+function calculateLeadScore(
+lead
+){
+
+let score = 0;
+
+switch(
+lead.status
+){
+
+case "New":
+score += 10;
+break;
+
+case "Contacted":
+score += 30;
+break;
+
+case "Interested":
+score += 60;
+break;
+
+case "Survey":
+score += 80;
+break;
+
+case "Booking":
+score += 95;
+break;
+
+case "Closing":
+score += 100;
+break;
+
+}
+
+if(
+lead.followUpCount > 3
+){
+
+score += 10;
+
+}
+
+return Math.min(
+score,
+100
+);
+
+}
+
+function getLeadTemperature(
+score
+){
+
+if(score >= 80)
+return "Hot";
+
+if(score >= 50)
+return "Warm";
+
+return "Cold";
+
+}
+
+async function followUpLead(id){
+
+const lead =
+await Storage.get(
+"leads",
+id
+);
+
+if(!lead)
+return;
+
+lead.followUpCount =
+(lead.followUpCount || 0)
++ 1;
+
+lead.lastFollowUp =
+new Date()
+.toISOString();
+
+lead.score =
+Math.min(
+(lead.score || 0) + 5,
+100
+);
+
+lead.temperature =
+getLeadTemperature(
+lead.score
+);
+
+await Storage.saveLead(
+lead
+);
+
+await Storage.logActivity(
+
+"followup",
+
+"crm",
+
+`Follow Up ${lead.name}`
+
+);
+
+App.toast(
+"Follow Up dicatat",
+"success"
+);
+
+loadLeads();
+
+App.updateStats();
 
 }
 
@@ -409,6 +692,17 @@ value="${lead.phone||""}">
 type="text"
 id="editSource"
 value="${lead.source||""}">
+
+<input
+type="date"
+id="editSurveyDate"
+value="${lead.surveyDate||""}">
+
+<input
+type="text"
+id="editTags"
+value="${(lead.tags||[]).join(",")}"
+placeholder="Investor,KPR,Cash">
 
 <select
 id="editStatus">
@@ -505,6 +799,20 @@ document.getElementById(
 "editStatus"
 ).value;
 
+lead.surveyDate =
+document.getElementById(
+"editSurveyDate"
+).value;
+
+lead.tags =
+document.getElementById(
+"editTags"
+)
+.value
+.split(",")
+.map(tag=>tag.trim())
+.filter(Boolean);
+
 lead.note =
 document.getElementById(
 "editNote"
@@ -525,6 +833,16 @@ validation.message
 
 return;
 }
+
+lead.score =
+calculateLeadScore(
+lead
+);
+
+lead.temperature =
+getLeadTemperature(
+lead.score
+);
 
 await Storage.saveLead(
 lead
@@ -556,12 +874,18 @@ DELETE
 
 async function deleteLead(id){
 
-const confirmDelete =
-confirm(
-"Hapus lead ini?"
-);
+const ok =
+await App.confirm({
 
-if(!confirmDelete)
+title:
+"Hapus Lead",
+
+message:
+"Data tidak dapat dikembalikan"
+
+});
+
+if(!ok)
 return;
 
 await Storage.remove(
@@ -569,8 +893,19 @@ await Storage.remove(
 id
 );
 
-App.showToast(
-"Lead dihapus"
+await Storage.logActivity(
+
+"delete",
+
+"crm",
+
+"Hapus Lead"
+
+);
+
+App.toast(
+"Lead dihapus",
+"warning"
 );
 
 loadLeads();
@@ -687,6 +1022,7 @@ PUBLIC
 return {
 
 init,
+
 loadLeads,
 
 openAddLead,
@@ -694,6 +1030,8 @@ openAddLead,
 editLead,
 
 deleteLead,
+
+followUpLead,
 
 openWhatsapp
 
