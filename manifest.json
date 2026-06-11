@@ -1,0 +1,33 @@
+{
+  "name": "DT Business OS AI",
+  "short_name": "DT OS",
+  "description": "Business Operating System untuk Sales, Properti, Freelancer dan UMKM",
+
+  "start_url": "/",
+
+  "display": "standalone",
+
+  "orientation": "portrait",
+
+  "background_color": "#ffffff",
+
+  "theme_color": "#4f46e5",
+
+  "scope": "/",
+
+  "icons": [
+
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+
+  ]
+}
