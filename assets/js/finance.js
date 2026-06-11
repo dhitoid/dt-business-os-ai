@@ -393,6 +393,22 @@ new Date()
 
 };
 
+const validation =
+Validator.validateFinance(
+item
+);
+
+if(
+!validation.valid
+){
+
+App.showToast(
+validation.message
+);
+
+return;
+}
+
 await Storage.saveFinance(
 item
 );
@@ -522,6 +538,22 @@ item.date =
 document.getElementById(
 "editDate"
 ).value;
+
+const validation =
+Validator.validateFinance(
+item
+);
+
+if(
+!validation.valid
+){
+
+App.showToast(
+validation.message
+);
+
+return;
+}
 
 await Storage.saveFinance(
 item
