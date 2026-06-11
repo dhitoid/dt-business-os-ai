@@ -9,7 +9,7 @@ IndexedDB Core
 const Storage = (() => {
 
 const DB_NAME = "DTBusinessOSAI";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let db = null;
 
@@ -54,6 +54,48 @@ resolve();
 request.onupgradeneeded = (e) => {
 
 db = e.target.result;
+
+/*
+========================================
+ACTIVITY LOGS
+========================================
+*/
+
+if(
+!db.objectStoreNames.contains(
+"activity_logs"
+)
+){
+
+db.createObjectStore(
+"activity_logs",
+{
+keyPath:"id"
+}
+);
+
+}
+
+/*
+========================================
+NOTIFICATIONS
+========================================
+*/
+
+if(
+!db.objectStoreNames.contains(
+"notifications"
+)
+){
+
+db.createObjectStore(
+"notifications",
+{
+keyPath:"id"
+}
+);
+
+}
 
 /*
 LEADS
@@ -166,6 +208,35 @@ mode
 return tx.objectStore(
 storeName
 );
+
+}
+
+/*
+========================================
+METADATA
+========================================
+*/
+
+function addMetadata(data){
+
+const now =
+new Date()
+.toISOString();
+
+return {
+
+...data,
+
+createdAt:
+data.createdAt || now,
+
+updatedAt:
+now,
+
+version:
+(data.version || 0) + 1
+
+};
 
 }
 
@@ -400,6 +471,40 @@ crypto.randomUUID();
 
 }
 
+lead =
+addMetadata(
+lead
+);
+
+await logActivity(
+
+"create",
+
+"crm",
+
+`Lead ${lead.name} disimpan`
+
+);
+
+await addNotification(
+
+"Lead Baru",
+
+`${lead.name} berhasil ditambahkan`,
+
+"success"
+
+);
+
+localStorage.setItem(
+
+"lastBackup",
+
+new Date()
+.toISOString()
+
+);
+
 return await update(
 "leads",
 lead
@@ -432,9 +537,83 @@ crypto.randomUUID();
 
 }
 
+task =
+addMetadata(
+task
+);
+
+localStorage.setItem(
+
+"lastBackup",
+
+new Date()
+.toISOString()
+
+);
+
 return await update(
 "tasks",
 task
+);
+
+await logActivity(
+
+"create",
+
+"planner",
+
+`Task ${task.title} disimpan`
+
+);
+
+await addNotification(
+
+"Task Baru",
+
+task.title,
+
+"info"
+
+);
+
+await logActivity(
+
+"create",
+
+"finance",
+
+`${item.title}`
+
+);
+
+await addNotification(
+
+"Transaksi",
+
+item.title,
+
+"success"
+
+);
+
+await logActivity(
+
+"create",
+
+"reminder",
+
+item.title
+
+);
+
+await addNotification(
+
+"Reminder",
+
+item.title,
+
+"info"
+
 );
 
 }
@@ -463,6 +642,20 @@ item.id =
 crypto.randomUUID();
 
 }
+
+item =
+addMetadata(
+item
+);
+
+localStorage.setItem(
+
+"lastBackup",
+
+new Date()
+.toISOString()
+
+);
 
 return await update(
 "finance",
@@ -496,9 +689,135 @@ crypto.randomUUID();
 
 }
 
+item =
+addMetadata(
+item
+);
+
+localStorage.setItem(
+
+"lastBackup",
+
+new Date()
+.toISOString()
+
+);
+
 return await update(
 "reminders",
 item
+);
+
+}
+
+/*
+========================================
+ACTIVITY LOG
+========================================
+*/
+
+async function logActivity(
+
+action,
+module,
+description
+
+){
+
+const log = {
+
+id:
+crypto.randomUUID(),
+
+action,
+
+module,
+
+description,
+
+createdAt:
+new Date()
+.toISOString()
+
+};
+
+localStorage.setItem(
+
+"lastBackup",
+
+new Date()
+.toISOString()
+
+);
+
+return await update(
+"activity_logs",
+log
+);
+
+}
+
+async function getActivities(){
+
+return await getAll(
+"activity_logs"
+);
+
+}
+
+/*
+========================================
+NOTIFICATION CENTER
+========================================
+*/
+
+async function addNotification(
+
+title,
+message,
+type="info"
+
+){
+
+const notification = {
+
+id:
+crypto.randomUUID(),
+
+title,
+
+message,
+
+type,
+
+read:false,
+
+createdAt:
+new Date()
+.toISOString()
+
+};
+
+localStorage.setItem(
+
+"lastBackup",
+
+new Date()
+.toISOString()
+
+);
+
+return await update(
+"notifications",
+notification
+);
+
+}
+
+async function getNotifications(){
+
+return await getAll(
+"notifications"
 );
 
 }
@@ -705,6 +1024,12 @@ saveLead,
 
 getTasks,
 saveTask,
+
+getActivities,
+logActivity,
+
+getNotifications,
+addNotification
 
 getFinance,
 saveFinance,
