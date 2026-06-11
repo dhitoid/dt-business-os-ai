@@ -283,6 +283,22 @@ new Date()
 
 };
 
+const validation =
+Validator.validateReminder(
+item
+);
+
+if(
+!validation.valid
+){
+
+App.showToast(
+validation.message
+);
+
+return;
+}
+
 await Storage.saveReminder(
 item
 );
@@ -409,6 +425,22 @@ document.getElementById(
 
 item.notified = false;
 
+const validation =
+Validator.validateReminder(
+item
+);
+
+if(
+!validation.valid
+){
+
+App.showToast(
+validation.message
+);
+
+return;
+}
+
 await Storage.saveReminder(
 item
 );
@@ -525,6 +557,22 @@ item
 );
 
 item.notified = true;
+
+const validation =
+Validator.validateReminder(
+item
+);
+
+if(
+!validation.valid
+){
+
+App.showToast(
+validation.message
+);
+
+return;
+}
 
 await Storage.saveReminder(
 item
