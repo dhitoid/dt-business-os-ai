@@ -30,6 +30,15 @@ document.getElementById(
 let leads =
 await Storage.getLeads();
 
+const filterValue =
+document
+.getElementById(
+"leadFilter"
+)
+?.value
+||
+"all";
+
 const keyword =
 searchInput?.value
 ?.toLowerCase()
@@ -60,6 +69,137 @@ lead =>
 
 }
 
+const today =
+new Date()
+.toISOString()
+.split("T")[0];
+
+switch(
+filterValue
+){
+
+case "hot":
+
+leads =
+leads.filter(
+lead=>
+
+lead.temperature ===
+"Hot"
+);
+
+break;
+
+case "warm":
+
+leads =
+leads.filter(
+lead=>
+
+lead.temperature ===
+"Warm"
+);
+
+break;
+
+case "cold":
+
+leads =
+leads.filter(
+lead=>
+
+lead.temperature ===
+"Cold"
+);
+
+break;
+
+case "survey":
+
+leads =
+leads.filter(
+lead=>
+
+lead.status ===
+"Survey"
+);
+
+break;
+
+case "booking":
+
+leads =
+leads.filter(
+lead=>
+
+lead.status ===
+"Booking"
+);
+
+break;
+
+case "closing":
+
+leads =
+leads.filter(
+lead=>
+
+lead.status ===
+"Closing"
+);
+
+break;
+
+case "lost":
+
+leads =
+leads.filter(
+lead=>
+
+lead.status ===
+"Lost"
+);
+
+break;
+
+case "followup":
+
+leads =
+leads.filter(
+lead=>
+
+(lead.followUpCount || 0)
+> 0
+);
+
+break;
+
+case "todaySurvey":
+
+leads =
+leads.filter(
+lead=>
+
+lead.surveyDate ===
+today
+);
+
+break;
+
+}
+
+leads.sort(
+(a,b)=>
+
+(b.score || 0)
+
+-
+
+(a.score || 0)
+
+);
+
+renderSummary(leads);
 renderLeads(leads);
 
 }
@@ -86,7 +226,22 @@ if (!leads.length) {
 container.innerHTML =
 
 `
-<div class="list-card">
+<div
+class="list-card
+
+${
+lead.temperature ===
+"Hot"
+
+?
+
+"hot-lead"
+
+:
+
+""
+
+}">
 
 <h3>
 Belum ada lead
@@ -289,6 +444,118 @@ Hapus
 `
 
 ).join("");
+
+}
+
+function renderSummary(
+leads
+){
+
+const el =
+document.getElementById(
+"crmSummary"
+);
+
+if(!el)
+return;
+
+const hot =
+
+leads.filter(
+x=>
+
+x.temperature ===
+"Hot"
+
+).length;
+
+const warm =
+
+leads.filter(
+x=>
+
+x.temperature ===
+"Warm"
+
+).length;
+
+const cold =
+
+leads.filter(
+x=>
+
+x.temperature ===
+"Cold"
+
+).length;
+
+el.innerHTML =
+
+`
+
+<div
+class="summary-grid">
+
+<div
+class="summary-card">
+
+🔥 ${hot}
+
+</div>
+
+<div
+class="summary-card">
+
+🟡 ${warm}
+
+</div>
+
+<div
+class="summary-card">
+
+❄️ ${cold}
+
+</div>
+
+</div>
+
+`;
+
+}
+
+function getUpcomingSurvey(){
+
+const today =
+new Date();
+
+return leads.filter(
+lead=>{
+
+if(!lead.surveyDate)
+return false;
+
+const survey =
+new Date(
+lead.surveyDate
+);
+
+const diff =
+
+Math.ceil(
+
+(
+survey - today
+)
+
+/
+
+86400000
+
+);
+
+return diff <= 3;
+
+});
 
 }
 
@@ -961,13 +1228,28 @@ document.getElementById(
 "leadSearch"
 );
 
-if(!search)
-return;
+if(search){
 
 search.addEventListener(
 "input",
 loadLeads
 );
+
+}
+
+const filter =
+document.getElementById(
+"leadFilter"
+);
+
+if(filter){
+
+filter.addEventListener(
+"change",
+loadLeads
+);
+
+}
 
 }
 
