@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>DT Business OS AI</title>
+
+<meta name="theme-color"
+content="#4f46e5">
+
+<link rel="manifest"
+href="manifest.json">
+
+<link rel="stylesheet"
+href="assets/css/style.css">
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- LOADER -->
+
+<div id="loader">
+
+<div class="loader-box">
+
+<div class="spinner"></div>
+
+<p>Loading DT Business OS AI...</p>
+
+</div>
+
+</div>
+
+<!-- SIDEBAR -->
+
+<aside id="sidebar">
+
+<div class="sidebar-header">
+
+<h2>DT OS AI</h2>
+
+<button id="closeSidebar">
+✕
+</button>
+
+</div>
+
+<nav>
+
+<button class="menu-btn"
+data-page="dashboard">
+
+🏠 Dashboard
+
+</button>
+
+<button class="menu-btn"
+data-page="crm">
+
+👥 CRM
+
+</button>
+
+<button class="menu-btn"
+data-page="planner">
+
+📅 Planner
+
+</button>
+
+<button class="menu-btn"
+data-page="finance">
+
+💰 Finance
+
+</button>
+
+<button class="menu-btn"
+data-page="reminder">
+
+⏰ Reminder
+
+</button>
+
+<button class="menu-btn"
+data-page="ai">
+
+🤖 AI Tools
+
+</button>
+
+<button class="menu-btn"
+data-page="settings">
+
+⚙️ Settings
+
+</button>
+
+</nav>
+
+</aside>
+
+<div id="overlay"></div>
+
+<!-- HEADER -->
+
+<header class="topbar">
+
+<button id="openSidebar">
+
+☰
+
+</button>
+
+<h1>
+
+DT Business OS AI
+
+</h1>
+
+<div class="header-actions">
+
+<button id="darkToggle">
+
+🌙
+
+</button>
+
+</div>
+
+</header>
+
+<!-- MAIN -->
+
+<main>
+
+<!-- DASHBOARD -->
+
+<section
+id="dashboard"
+class="page active">
+
+<div class="hero-card">
+
+<h2>
+
+Selamat Datang 👋
+
+</h2>
+
+<p>
+
+Business Operating System
+untuk Sales, Property &
+Entrepreneur.
+
+</p>
+
+</div>
+
+<div class="stats-grid">
+
+<div class="stat-card">
+
+<h3 id="leadCount">
+0
+</h3>
+
+<p>Total Leads</p>
+
+</div>
+
+<div class="stat-card">
+
+<h3 id="taskCount">
+0
+</h3>
+
+<p>Tasks</p>
+
+</div>
+
+<div class="stat-card">
+
+<h3 id="incomeTotal">
+0
+</h3>
+
+<p>Income</p>
+
+</div>
+
+<div class="stat-card">
+
+<h3 id="expenseTotal">
+0
+</h3>
+
+<p>Expense</p>
+
+</div>
+
+</div>
+
+<h3 class="section-title">
+
+Quick Action
+
+</h3>
+
+<div class="quick-grid">
+
+<button
+class="quick-btn"
+id="addLeadBtn">
+
+👥
+<span>Lead</span>
+
+</button>
+
+<button
+class="quick-btn"
+id="addTaskBtn">
+
+📅
+<span>Task</span>
+
+</button>
+
+<button
+class="quick-btn"
+id="addIncomeBtn">
+
+💰
+<span>Income</span>
+
+</button>
+
+<button
+class="quick-btn"
+id="addReminderBtn">
+
+⏰
+<span>Reminder</span>
+
+</button>
+
+</div>
+
+</section>
+
+<!-- CRM -->
+
+<section
+id="crm"
+class="page">
+
+<div class="page-header">
+
+<h2>
+
+CRM Leads
+
+</h2>
+
+<button id="newLead">
+
++ Lead
+
+</button>
+
+</div>
+
+<input
+type="search"
+id="leadSearch"
+placeholder="Cari Lead">
+
+<div id="crmList">
+
+</div>
+
+</section>
+
+<!-- PLANNER -->
+
+<section
+id="planner"
+class="page">
+
+<div class="page-header">
+
+<h2>
+
+Planner
+
+</h2>
+
+<button id="newTask">
+
++ Task
+
+</button>
+
+</div>
+
+<div id="taskList">
+
+</div>
+
+</section>
+
+<!-- FINANCE -->
+
+<section
+id="finance"
+class="page">
+
+<div class="page-header">
+
+<h2>
+
+Finance
+
+</h2>
+
+<button id="newFinance">
+
++ Transaksi
+
+</button>
+
+</div>
+
+<div id="financeList">
+
+</div>
+
+</section>
+
+<!-- REMINDER -->
+
+<section
+id="reminder"
+class="page">
+
+<div class="page-header">
+
+<h2>
+
+Reminder
+
+</h2>
+
+<button id="newReminder">
+
++ Reminder
+
+</button>
+
+</div>
+
+<div id="reminderList">
+
+</div>
+
+</section>
+
+<!-- AI -->
+
+<section
+id="ai"
+class="page">
+
+<div class="page-header">
+
+<h2>
+
+AI Tools
+
+</h2>
+
+</div>
+
+<div class="ai-grid">
+
+<button
+class="ai-tool">
+
+Follow Up WA
+
+</button>
+
+<button
+class="ai-tool">
+
+Broadcast WA
+
+</button>
+
+<button
+class="ai-tool">
+
+Caption Properti
+
+</button>
+
+<button
+class="ai-tool">
+
+Script Telepon
+
+</button>
+
+</div>
+
+<textarea
+id="aiOutput"
+placeholder="Output AI..."
+readonly>
+
+</textarea>
+
+</section>
+
+<!-- SETTINGS -->
+
+<section
+id="settings"
+class="page">
+
+<h2>
+
+Settings
+
+</h2>
+
+<div class="settings-card">
+
+<label>
+
+Dark Mode
+
+</label>
+
+<input
+type="checkbox"
+id="themeSwitch">
+
+</div>
+
+<div class="settings-card">
+
+<label>
+
+Enable Notification
+
+</label>
+
+<button
+id="notifPermission">
+
+Aktifkan
+
+</button>
+
+</div>
+
+<div class="settings-card">
+
+<label>
+
+Install PWA
+
+</label>
+
+<button
+id="installBtn">
+
+Install
+
+</button>
+
+</div>
+
+</section>
+
+</main>
+
+<!-- BOTTOM NAV -->
+
+<nav
+class="bottom-nav">
+
+<button
+class="nav-btn active"
+data-page="dashboard">
+
+🏠
+
+</button>
+
+<button
+class="nav-btn"
+data-page="crm">
+
+👥
+
+</button>
+
+<button
+class="nav-btn"
+data-page="planner">
+
+📅
+
+</button>
+
+<button
+class="nav-btn"
+data-page="finance">
+
+💰
+
+</button>
+
+<button
+class="nav-btn"
+data-page="ai">
+
+🤖
+
+</button>
+
+</nav>
+
+<!-- FLOAT BUTTON -->
+
+<button id="fab">
+
++
+
+</button>
+
+<!-- TOAST -->
+
+<div id="toast">
+
+Ready
+
+</div>
+
+<!-- GLOBAL MODAL -->
+
+<div id="modal">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h3 id="modalTitle">
+
+Modal
+
+</h3>
+
+<button id="closeModal">
+
+✕
+
+</button>
+
+</div>
+
+<div id="modalBody">
+
+</div>
+
+</div>
+
+</div>
+
+<script src="assets/js/storage.js"></script>
+<script src="assets/js/crm.js"></script>
+<script src="assets/js/planner.js"></script>
+<script src="assets/js/finance.js"></script>
+<script src="assets/js/reminder.js"></script>
+<script src="assets/js/ai.js"></script>
+<script src="assets/js/pwa.js"></script>
+<script src="assets/js/app.js"></script>
+
+</body>
+</html>
