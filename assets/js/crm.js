@@ -280,6 +280,26 @@ SAVE LEAD
 */
 
 async function saveLead(e){
+    
+lead.phone =
+Validator.normalizePhone(
+lead.phone
+);
+
+lead.name =
+Validator.sanitize(
+lead.name
+);
+
+lead.source =
+Validator.sanitize(
+lead.source
+);
+
+lead.note =
+Validator.sanitize(
+lead.note
+);
 
 e.preventDefault();
 
@@ -318,6 +338,22 @@ new Date()
 .toISOString()
 
 };
+
+const validation =
+Validator.validateLead(
+lead
+);
+
+if(
+!validation.valid
+){
+
+App.showToast(
+validation.message
+);
+
+return;
+}
 
 await Storage.saveLead(
 lead
@@ -473,6 +509,22 @@ lead.note =
 document.getElementById(
 "editNote"
 ).value;
+
+const validation =
+Validator.validateLead(
+lead
+);
+
+if(
+!validation.valid
+){
+
+App.showToast(
+validation.message
+);
+
+return;
+}
 
 await Storage.saveLead(
 lead
